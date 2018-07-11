@@ -1,0 +1,813 @@
+<html>
+<head>
+	<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+	<meta http-equiv="Pragma" content="no-cache"/>
+	<meta http-equiv="Expires" content="0"/>
+	<style type="text/css">
+		html
+		{
+			overflow: scroll;
+			overflow-x: hidden;
+			zoom: 220%;
+			background-color: black;
+		}
+		::-webkit-scrollbar
+		{
+			width: 0px;
+		}
+		#header { background-color: #0CF; }
+		#footer { background-color: #0CF; }
+		#thetitle
+		{
+			font-size: large;
+			font-weight: bold;
+		}
+		canvas
+		{
+/*			background-color: #CCC;	*/
+			background-image: url(FieldImage752x306.jpg);
+			border: medium maroon outset;
+		}
+		table
+		{
+			border: 1px #000 solid;
+			font-family: sans-serif;
+		}
+		td { border: 1px #000 solid; }
+		#clockcell
+		{
+			background-color: black;
+			color: gold;
+			margin: 0px;
+			width:	750px;
+			/*height: 100px; */
+		}
+		#clyde
+		{
+			background-color: lime;
+		}
+		#pinky
+		{
+			background-color: pink;
+		}
+		.decision { font-size: small; }
+		.redscoring
+		{
+			background-color: #F88;
+			font-size: xx-large;
+		}
+		.bluescoring
+		{
+			background-color: #88F;
+			font-size: xx-large;
+		}
+		.redtime
+		{
+			background-color: #FFC;
+			font-size: small;
+		}
+		.bluetime
+		{
+			background-color: #CFF;
+			font-size: small;
+		}
+		.scorelabel
+		{
+			font-size: small;
+		}
+		#rscore,#rrank,#bscore,#brank
+		{
+			font-size: xx-large;
+		}
+	</style>
+</head>
+<body onkeypress="handleKeys(event)" onload="startCountdown();fieldReset();">
+<center>
+<div>
+	<table id="header" width="760px" style="display:none;">
+		<tr>
+			<td><span id="thetitle">FRC 2018 Power Up</span></td>
+			<td id="gpsupport"></td>
+			<td><span class="menuitem">Help</span></td>
+		</tr>
+	</table>
+</div>
+<div>
+<!--	<table width="667px">  -->
+	<table width="750px">
+		<tr>
+			<h1 width="170px" id="clockcell">CLOCK: <span id="clock">0</span>&nbsp;Secs</h1>
+		</tr>
+		<tr>
+			<td width="100px" height="50px" class="redscoring" >RED:&nbsp;&nbsp;<span id="rscore">0</span></td>
+			<td width="100px" height="50px" class="redscoring" >RP:&nbsp;&nbsp;<span id="rrank">0</span></td>
+			<td width="100px" height="50px" class="bluescoring" >BLUE:&nbsp;&nbsp;<span id="bscore">0</span></td>
+			<td width="100px" height="50px" class="bluescoring" >RP:&nbsp;&nbsp;<span id="brank">0</span></td>
+		</tr>
+		<tr style="display:none;">
+			<td class="scorelabel">Auton</td>
+			<td class="redscoring" id="redauton">0</td>
+			<td class="redscoring" id="redautonrank">0-0-0</td>
+			<td class="bluescoring" id="blueauton">0</td>
+			<td class="bluescoring" id="blueautonrank">0-0-0</td>
+		</tr>
+		<tr style="display:none;">
+			<td class="scorelabel">Switch</td>
+			<td class="redscoring" id="redswpts">0</td>
+			<td class="redtime" id="redswtime">0</td>
+			<td class="bluescoring" id="blueswpts">0</td>
+			<td class="bluetime" id="blueswtime">0</td>
+		</tr>
+		<tr style="display:none;">
+			<td class="scorelabel">Scale</td>
+			<td class="redscoring" id="redscpts">0</td>
+			<td class="redtime" id="redsctime">0</td>
+			<td class="bluescoring" id="bluescpts">0</td>
+			<td class="bluetime" id="bluesctime">0</td>
+		</tr>
+		<tr style="display:none;">
+			<td class="scorelabel">Vault</td>
+			<td class="redscoring" id="redvault">0</td>
+			<td class="redscoring" id="redvault2">0-0-0</td>
+			<td class="bluescoring" id="bluevault">0</td>
+			<td class="bluescoring" id="bluevault2">0-0-0</td>
+		</tr>
+		<tr style="display:none;">
+			<td class="scorelabel">Climb</td>
+			<td class="redscoring" id="redclimb">0</td>
+			<td class="redscoring" id="redclimbdetail">0-0-0</td>
+			<td class="bluescoring" id="blueclimb">0</td>
+			<td class="bluescoring" id="blueclimbdetail">0-0-0</td>
+		</tr>
+	</table>
+</div>
+<div>
+  <canvas id="fieldTopView" width="752" height="306" ondblclick="handleDblClick(event)" onclick="displayMouse1(event)">You Browser Sucks</canvas>
+</div>
+<div>
+	<table width="750px" style="display:none;">
+		 <tr>
+		 	<td width="120px">FIELD:&nbsp;<button onclick="fieldReset()" id="fldreset">Reset</button></td>
+		 	<td width="120px">
+		 		<input id="mode" type="checkbox" checked>Auton</input>
+		 		<button onclick="startCountdown()" id="btnEnable">Enable</button>
+		 	</td>
+		 	<td width="50px"><input id="rand" type="checkbox" checked>Random</input></td>
+		 	<td>
+		 		<input id="puppet" type="checkbox" unchecked onclick="togglePuppet()">Puppet</input>
+				<input id="singlestep" type="checkbox" unchecked onclick="updateSS()">SingleStep</input>
+				<input id="drones" type="checkbox" unchecked onclick="updateDrones()">Drones</input>
+		 	</td>
+		 	<td colspan="2" align="right">
+		 		<input id="timek" type="checkbox" unchecked onclick="toggleTime()">10X</input>
+		 		<button onclick="saveGameSetup()">Save</button>
+		 	</td>
+		 </tr>
+		 <tr id="clyde">
+			<td>Auton<input onchange="displayAuton()" id="aselect1" type="number" value="0" size="5" maxlength="2" max="16" min="0" onselect="displayAuton()" onclick="displayAuton()" onkeyup="displayAuton()"></td>
+			<td>Delay<input id="adelay1" type="number" value="0" size="5" maxlength="2" max="9" min="0"></td>
+			<td>Colors:&nbsp;<span id="colors">XXX</span></td>
+			<td colspan="2" onclick="updateGameData()">Alliance
+				<input type="radio" value="red" name="alliance" id="redalliance" checked>Red
+<!--				<input type="radio" value="blue" name="alliance" id="bluealliance">Blue  -->
+			</td>
+			<td class="decision">Switch: <span id="decisionSW1">?</span><br>Scale: <span id="decisionSC1">?</span></td>
+		 </tr>
+		 <tr>
+		 	<td colspan="6"><span id="adescr1">?</span></td>
+		 </tr>
+		 <tr id="pinky">
+			<td>Auton<input onchange="displayAuton2()" id="aselect2" type="number" value="0" size="5" maxlength="2" max="16" min="0" onselect="displayAuton2()" onclick="displayAuton2()" onkeyup="displayAuton2()"></td>
+			<td>Delay<input id="adelay2" type="number" value="0" size="5" maxlength="2" max="9" min="0"></td>
+			<td>Colors:&nbsp;<span id="colors2">XXX</span></td>
+			<td colspan="2" onclick="updateGameData()">Alliance
+<!--				<input type="radio" value="red" name="alliance" id="redalliance" checked>Red -->
+				<input type="radio" value="blue" name="alliance" id="bluealliance">Red
+			</td>
+			<td class="decision">Switch: <span id="decisionSW2">?</span><br>Scale: <span id="decisionSC2">?</span></td>
+<!--			<td><button onclick="saveGameSetup()">Save</button></td>   -->
+		 </tr>
+		 <tr>
+		 	<td colspan="6"><span id="a2Descr">?</span></td>
+		 </tr>
+		 <tr id="puppetinfo" style="display:none;">
+		 	<td colspan="3">Puppet Domain: <input type="text" id="loca" onchange="updateDomain()" size="35"></td>
+			<td colspan="3"><span id="pstat">...</span></td>
+		 </tr>
+	</table>
+</div>
+<div>
+	<table id="footer" width="760px" style="display:none;">
+		<tr>
+			<td><span class="menuitem" onclick="toggleHelp()">Help</span></td>
+			<td><span class="menuitem" id="midiags" onclick="toggleDiags()" >Hide Diagnostics</span></td>
+			<td><span class="menuitem" id="help" onclick="showHideHelp('k')">Keyboard Help...</span></td>
+			<td><span class="menuitem" id="Xboxhelp" onclick="showHideHelp('x')">Controller Help...</span></td>
+		</tr>
+	</table>
+</div>
+<div style="display:none;">
+	<img id="keyboard_help_key" src="keyboard.jpg" title="SHIFT will double speed of moves and throw cube." ondblclick="showHideHelp()" style="display:none;">
+	<img id="xbox_help_key" src="Xbox.png" title="SHIFT will double speed of moves and throw cube." ondblclick="showHideHelp()" style="display:none;">
+</div>
+	</center>
+<div id="diagnostics" style="display:none;">
+	<pre id="mouseloc1">
+	0
+	</pre>
+	<pre id="diag1">
+	?
+	</pre>
+</div>
+<!-- <img src="fieldImage1074x441.jpg" width="667" height="274" >  -->
+<script type="text/javascript">
+
+/* ----------------------------    Globals     ------------------------------*/
+
+/* ----------------------------    Utilities     ------------------------------*/
+
+	var theTimer;
+	var theTimer2;
+	var timeK = 1;
+	var singleStep = false;
+	var step = false;
+	var drones = false;
+	var cycle = 0;
+	var isAuton = true;
+
+
+	var clockcell = document.getElementById("clockcell");
+	var useragent = navigator.userAgent;
+	var platform = 0;
+	var browser = 0;
+	var supportsGamepads = false;
+
+//	var drones = document.getElementById("drones");
+
+	/* vvvvvvv  puppet Stuff vvvvvvv */
+	var puppet = document.getElementById("puppet");
+	var pinfo = document.getElementById("puppetinfo");
+	var domain = localStorage.getItem("GS_theIP");
+	var pstat = document.getElementById("pstat");
+
+	if (domain == "undefined") {
+		domain = "http://10.10.100.254:8899/";
+		localStorage.setItem("GS_theIP",domain);
+	}
+	document.getElementById("loca").value = domain;
+
+	function toggleHelp(){
+
+	}
+	function toggleDiags(){
+		var thing = document.getElementById("diagnostics");
+		if (thing.style.display == "none"){
+//			thing.style.display=(thing.style.display=="none")?"block":"none";
+			thing.style.display = "block";
+			document.getElementById("midiags").innerHTML = "Hide Diagnostics";
+		}else{
+			thing.style.display = "none";
+			document.getElementById("midiags").innerHTML = "Show Diagnostics";
+		}
+	}
+	function toggleTime(){
+		var timekst = document.getElementById("timek");
+		if (timekst.checked) {
+			timeK = 10;
+		}else{
+			timeK = 1;
+		}
+		if (enabled) {
+			clearInterval(theTimer);
+			clearInterval(theTimer2);
+			theTimer = setInterval(periodic, 100/timeK);
+			theTimer2 = setInterval(secondInterval, 1000/timeK);		// 1 sec scoring time
+		}
+	}
+	function togglePuppet(){
+		if ( puppet.checked ) pinfo.style.display="table-row"; else pinfo.style.display="none";
+	}
+	function updateSS(){
+		if (document.getElementById("singlestep").checked) {singleStep = true; step = false;}
+		else singleStep = false;
+	}
+	function updateDrones(){
+		if (drones.checked) drones = true; else drones = false;
+	}
+	function updateDomain(){
+		domain = document.getElementById("loca").value;
+		localStorage.setItem("GS_theIP",domain);
+	}
+
+	/* ^^^^^^^^^^^^^^^^^^^^^^^^^^^  */
+
+	function showHideHelp(id){
+		if(id == "k")
+			var thing = document.getElementById("keyboard_help_key");
+		else
+			var thing = document.getElementById("xbox_help_key");
+
+		thing.style.display=(thing.style.display=="none")?"block":"none";
+	}
+	function Gestalt(){
+		diag1.innerHTML = useragent;
+		if (useragent.indexOf("Macintosh") > 0) platform = 1;
+		else if (useragent.indexOf("Windows") > 0) platform = 2;
+		else if (useragent.indexOf("Linux") > 0) platform = 3;
+
+		if (useragent.indexOf("Chrome") > 0) browser = 1;		// must do this frst, Safari appears in UserAgent for Chrome !
+		else if (useragent.indexOf("Safari") > 0) browser = 2;
+		else if (useragent.indexOf("Firefox") > 0) browser = 3;
+
+		if (browser == 1) supportsGamepads = true;
+	}
+	function displayMouse1(evt){
+		var bRect = cvs.getBoundingClientRect();
+		mouseX = ((evt.clientX - bRect.left)*(cvs.width/bRect.width)).toFixed(0);
+		mouseY = ((evt.clientY - bRect.top)*(cvs.height/bRect.height)).toFixed(0);
+		loc1.innerHTML = "("+mouseX+","+mouseY+")";
+	}
+
+	function saveGameSetup(){
+		var i = parseInt(document.getElementById("aselect1").value);
+		localStorage.setItem("GS_theAuton1",i);
+		var i = parseInt(document.getElementById("aselect2").value);
+		localStorage.setItem("GS_theAuton2",i);
+		localStorage.setItem("GS_RedAlliance",redalliance.checked);
+		localStorage.setItem("GS_RedSwitch",redswitch);
+		localStorage.setItem("GS_BlueSwitch",blueswitch);
+		localStorage.setItem("GS_Scale",scale);
+		localStorage.setItem("GS_Random",document.getElementById("rand").checked);
+		localStorage.setItem("GS_Auton",document.getElementById("mode").checked);
+		localStorage.setItem("GS_Drones",document.getElementById("drones").checked);
+		localStorage.setItem("GS_params","OK");
+	}
+	function loadGameSetup(){
+		// since localstorage seems to be strings only, they need to be converted to actual types
+		if ( localStorage.getItem("GS_params") == "OK"  ){
+			theAuton1 = localStorage.getItem("GS_theAuton1");
+			document.getElementById("aselect1").value = theAuton1;
+			theAuton2 = localStorage.getItem("GS_theAuton2");
+			document.getElementById("aselect2").value = theAuton2;
+
+			var x = localStorage.getItem("GS_RedAlliance");
+			redalliance.checked= x=="true"?true:false;
+			bluealliance.checked= x=="true"?false:true;
+			redswitch = parseInt(localStorage.getItem("GS_RedSwitch"));
+			blueswitch = parseInt(localStorage.getItem("GS_BlueSwitch"));
+			scale = parseInt(localStorage.getItem("GS_Scale"));
+
+			x = localStorage.getItem("GS_Random");
+			document.getElementById("rand").checked = x=="true"?true:false;
+			x = localStorage.getItem("GS_Auton");
+			document.getElementById("mode").checked = x=="true"?true:false;
+			x = localStorage.getItem("GS_Drones");
+			document.getElementById("drones").checked = x=="true"?true:false;
+		}
+	}
+
+	function updateGameData(){
+
+		if (redalliance.checked){
+			colors.innerHTML = ((redswitch>0.5)?"L":"R") + ((scale>0.5)?"L":"R") + ((blueswitch>0.5)?"L":"R");
+			colors2.innerHTML = ((blueswitch>0.5)?"L":"R") + ((scale>0.5)?"L":"R") + (redswitch>0.5?"L":"R");
+		}else{
+			colors.innerHTML = ((blueswitch>0.5)?"L":"R") + ((scale>0.5)?"L":"R") + (redswitch>0.5?"L":"R");
+			colors2.innerHTML = ((redswitch>0.5)?"L":"R") + ((scale>0.5)?"L":"R") + ((blueswitch>0.5)?"L":"R");
+		}
+	}		// specifically to update "LLR" string
+
+	function handleDblClick(evt){
+		var bRect = cvs.getBoundingClientRect();
+		mouseX = ((evt.clientX - bRect.left)*(cvs.width/bRect.width)).toFixed(0);
+		mouseY = ((evt.clientY - bRect.top)*(cvs.height/bRect.height)).toFixed(0);
+
+		if ( (mouseX > SWR_Left_X)&&(mouseX < (SWR_Left_X+SW_W)) ){		// is it anywhere in Switch Red
+			if ( (mouseY > SWR_Left_Y)&&(mouseY < (SWR_Left_Y+SW_H)) ){
+				redswitch = 1;
+			}
+			else if ((mouseY > SWR_Right_Y)&&(mouseY < (SWR_Right_Y+SW_H)) ){
+				redswitch = 0;
+			}
+			drawFE_SwitchRed();
+		}
+		else if ( (mouseX > SWB_Left_X)&&(mouseX < (SWB_Left_X+SW_W)) ){		// is it anywhere in Switch Red
+			if ( (mouseY > SWB_Left_Y)&&(mouseY < (SWB_Left_Y+SW_H)) ){
+				blueswitch = 1;
+			}
+			else if ((mouseY > SWB_Right_Y)&&(mouseY < (SWB_Right_Y+SW_H)) ){
+				blueswitch = 0;
+			}
+			drawFE_SwitchBlue();
+		}
+		else if ( (mouseX > SCA_Left_X)&&(mouseX < (SCA_Left_X+SW_W)) ){		// is it anywhere in Switch Red
+			if ( (mouseY > SCA_Left_Y)&&(mouseY < (SCA_Left_Y+SW_H)) ){
+				scale = 1;
+			}
+			else if ((mouseY > SCA_Right_Y)&&(mouseY < (SCA_Right_Y+SW_H)) ){
+				scale = 0;
+			}
+			drawFE_Scale();
+		}
+		updateGameData();
+
+		if(PointInRect(mouseX,mouseY,poseX-10,poseY-10,20,20)) {
+			alert("Primary Robot","OK");
+		}
+		else if(PointInRect(mouseX,mouseY,OposeX[0]-10,OposeY[0]-10,20,20)) {
+			alert("Opponent Robot - Pinky","OK");
+		}
+		else if(PointInRect(mouseX,mouseY,OposeX[1]-10,OposeY[1]-10,20,20)) {
+			alert("Opponent Drone - Duey","OK");
+		}
+		else if(PointInRect(mouseX,mouseY,OposeX[2]-10,OposeY[2]-10,20,20)) {
+			alert("Opponent Drone - Louie","OK");
+		}
+		else if(PointInRect(mouseX,mouseY,PposeX[0]-10,PposeY[0]-10,20,20)) {
+			alert("Partner Drone - Huey","OK");
+		}
+		else if(PointInRect(mouseX,mouseY,PposeX[1]-10,PposeY[1]-10,20,20)) {
+			alert("Partner Drone - 7 of 9","OK");
+		}
+	}	// for entire canvas
+	function handleKeys(event){
+		var key = event.keyCode;
+
+		diag1.innerHTML = key;
+		if ((key == 32)&&(puppet.checked)) disableRobot();
+	if (enabled)
+		switch(key){
+			case 32:
+			// space
+				if (singleStep) step = true;
+				break;
+			// Forward
+			case 119:
+				Drive_Arcade_opponent(10,0,0);
+				break;
+			case 105:
+				Drive_Arcade(10,0);
+				break;
+			case 69:
+				Drive_Arcade_opponent(20,0,0);
+				break;
+			case 73:
+				Drive_Arcade(20,0);
+				break;
+
+			// Reverse
+			case 115:
+				Drive_Arcade_opponent(-10,0,0);
+				break;
+			case 107:
+				Drive_Arcade(-10,0);
+				break;
+			case 83:
+				Drive_Arcade_opponent(-20,0,0);
+				break;
+			case 75:
+				Drive_Arcade(-20,0);
+				break;
+
+			// Left
+			case 113:
+				moveY_opponent(-10,0);
+				break;
+			case 117:
+				Drive_Cheesy(0,0,-10);
+//				moveY(-10);
+				break;
+			case 81:
+				moveY_opponent(-20,0);
+				break;
+			case 85:
+				Drive_Cheesy(0,0,-20);
+//				moveY(-20);
+				break;
+
+			// Right
+			case 101:
+				moveY_opponent(10,0);
+				break;
+			case 111:
+				Drive_Cheesy(0,0,10);
+//				moveY(10);
+				break;
+			case 69:
+				moveY_opponent(20,0);
+				break;
+			case 79:
+				Drive_Cheesy(0,0,20);
+//				moveY(20);
+				break;
+
+			// rotate CCW
+			case 97:
+				Drive_Arcade_opponent(0,-10,0);
+				break;
+			case 65:
+				Drive_Arcade_opponent(0,-20,0);
+				break;
+
+			case 106:
+				Drive_Arcade(0,-10);
+				break
+			case 74:
+//				rotate(-10);		// degrees
+				Drive_Arcade(0,-20);
+				break;
+
+			// rotate CW
+			case 100:
+				Drive_Arcade_opponent(0,10,0);
+				break;
+			case 68:
+				Drive_Arcade_opponent(0,20,0);
+				break;
+			case 108:
+				Drive_Arcade(0,10);
+				break;
+			case 76:
+//				rotate(10);		// degrees
+				Drive_Arcade(0,20);
+				break;
+
+			// cube manipulator
+			case 77:
+				if (hasCube) throwCube(); else grabCube();
+				break;
+			case 60:
+				if (hasCube) poopCube(1); else grabCube();
+				break;
+			case 109:
+				if (hasCube) pukeCube(); else grabCube();
+				break;
+			case 44:
+				if (hasCube) poopCube(0); else grabCube();
+				break;
+			case 88:
+			case 90:
+				if (OhasCube[0]) throwCube_opponent(0); else grabCube_opponent(0);
+				break;
+			case 122:
+			case 120:
+				if (OhasCube[0]) pukeCube_opponent(0); else grabCube_opponent(0);
+				break;
+
+			case 47:
+			case 46:
+				climb();
+				break;
+
+			case 49:
+				addToVault_Boost("red");
+				break;
+			case 50:
+				addToVault_Levitate("red");
+				break;
+			case 51:
+				addToVault_Force("red");
+				break;
+			case 56:
+				addToVault_Force("blue");
+				break;
+			case 57:
+				addToVault_Levitate("blue");
+				break;
+			case 48:
+				addToVault_Boost("blue");
+				break;
+
+			case 33:
+				// change to requests
+				if ((Red_Force_PU != pus.queued)&&(Red_Force_PU != pus.active)&&(Red_Boost == 3)&&(Red_Force_PU != pus.done)) Red_Boost_PU = pus.queued;
+				startNextPowerUp();
+				break;
+			case 64:
+				if(Red_Levitate == 3)Red_Levitate_PU = pus.active;
+				break;
+			case 35:
+				if ((Red_Boost_PU != pus.queued)&&(Red_Boost_PU != pus.active)&&(Red_Force == 3)&&(Red_Boost_PU != pus.done)) Red_Force_PU = pus.queued;
+				startNextPowerUp();
+				break;
+			case 42:
+				if ((Blu_Boost_PU != pus.queued)&&(Blu_Boost_PU != pus.active)&&(Blu_Force == 3)&&(Blu_Boost_PU != pus.done)) Blu_Force_PU = pus.queued;
+				startNextPowerUp();
+//				Blu_Force_PU = pus.queued;
+				break;
+			case 40:
+				if(Blu_Levitate == 3)Blu_Levitate_PU = pus.active;
+				startNextPowerUp();
+				break;
+			case 41:
+				if ((Blu_Force_PU != pus.queued)&&(Blu_Force_PU != pus.active)&&(Blu_Boost == 3)&&(Blu_Force_PU != pus.done)) Blu_Boost_PU = pus.queued;
+//				Blu_Boost_PU = pus.queued;
+				startNextPowerUp();
+				break;
+
+			case 99:
+			case 118:
+				climb_opponent(0);
+				break;
+			default:
+				break;
+		}
+	}		// for entire body of web page
+
+	function periodic(){
+		if ((!singleStep)||(singleStep&&step)){
+			step = false;
+			drawField();
+			if (isAuton) {
+				autonPeriodic();		// primary robot
+//				autonPeriodic1();		// partner robots
+				autonPeriodic2();		// all opponents
+			}else{
+				if (drones){
+					teleopPeriodic(0);		// partners
+					teleopPeriodic(1);		// partners
+					teleopPeriodic2(1);		// opponents
+					teleopPeriodic2(2);		// opponents
+				}
+			}
+			matchClock--;
+	//		clock.innerHTML = (matchClock/10).toFixed(0)+":"+tickker;
+			clock.innerHTML = (matchClock/10).toFixed(1);
+			if ( matchClock <= 0) stopClock();
+			drawRobot();
+			// drawRobot_partner(0);
+			// drawRobot_partner(1);
+			drawRobot_opponent(0);
+			// drawRobot_opponent(1);
+			// drawRobot_opponent(2);
+
+	//		if (matchClock < 200) clockcell.innerHTML = 100;
+			if (matchClock == 0) clockcell.setAttribute("Style","background-color:black;color:red;");
+			else if (matchClock < 200) clockcell.setAttribute("Style","background-color:black;color:red;");
+			else clockcell.setAttribute("Style","background-color:black;color:gold;");
+		}
+	}			// drawing and auton timeslices are equal for now
+
+	function animation(){
+		var duh = Math.random();
+
+		if (cycle++ < 10) {
+			drawAnimation(cycle);
+		}else{
+			clearInterval(theTimer);
+			startTheMatch();
+		}
+	}
+
+	function startCountdown(){
+		if (enabled == false){
+//			if ((mode.checked)&&(document.getElementById("rand").checked)) {		// if auton	and random
+			if (isAuton) {		// if auton	and random
+				cycle = 0;
+				theTimer = setInterval(animation, 150);
+			}else{
+				startTheMatch();
+			}
+		}else{
+			stopClock();
+		}
+	}
+	function startTheMatch(){
+		// if (mode.checked) {		// if auton
+			if (isAuton) {		// if auton
+				matchClock = 150;		// 15 seconds
+				autonEnable();
+				autonEnable2();
+			}else{
+				matchClock = 1200;
+				initTeleop();
+				initTeleop2();
+			}
+			enabled = true;
+			document.getElementById('btnEnable').innerHTML = "Disable";
+			theTimer = setInterval(periodic, 100/timeK);
+			theTimer2 = setInterval(secondInterval, 1000/timeK);		// 1 sec scoring timer
+	}		// create timer for periodic()
+//	function startCountdown(){
+//		if (enabled == false){
+//			if (mode.checked) {		// if auton
+//				matchClock = 150;		// 15 seconds
+//				autonEnable();
+//				autonEnable2();
+//			}else{
+//				matchClock = 1200;
+//				initTeleop();
+//				initTeleop2();
+//			}
+//			enabled = true;
+//			document.getElementById('btnEnable').innerHTML = "Disable";
+//			theTimer = setInterval(periodic, 100/timeK);
+//			theTimer2 = setInterval(secondInterval, 1000/timeK);		// 1 sec scoring timer
+//		}else{
+//			stopClock();
+//		}
+//	}		// create timer for periodic()
+	function stopClock(){
+		if (enabled ){
+			enabled = false;
+			document.getElementById('btnEnable').innerHTML = "Enable";
+			clearInterval(theTimer);
+			clearInterval(theTimer2);
+			if (isAuton){
+				checkForAutons();
+				isAuton = false;
+				startTheMatch();
+			}else{						// if end of teleop
+				checkForClimbs();
+				updateRP();
+				if(parseInt(bscore.innerHTML) > parseInt(rscore.innerHTML)){
+					localStorage.setItem("winner","blue");
+				}else if(parseInt(bscore.innerHTML) < parseInt(rscore.innerHTML)){
+					localStorage.setItem("winner","red")
+				}else{
+					localStorage.setItem("winner","neither")
+				}
+				localStorage.setItem("bscore",BlueScore.toString());
+				localStorage.setItem("rscore",RedScore.toString());				
+				location.href = "GameOver.html";
+			}
+			if(puppet.checked) disableRobot();					// for driving actual robot
+		}
+	}			// cancel timer for periodic()
+
+	function PointInRect(px,py,rx,ry,rw,rh){
+ 		return ( (px > rx)&&(px < rx+rw)&&(py > ry)&&(py < ry+rh) );
+ 	}
+
+ 	function RobotCSpaceCollision(px,py,pr,pz,rx,ry,rw,rh){
+
+ 		return (true);
+ 	}
+
+/* ----------------------------    Robots     ------------------------------*/
+</script>
+
+<script src="GS_PowerCubes.js"></script><!-- Everything Cube Related -->
+
+<!-- <script src="GS_myRobot.js"></script> --><!-- Our Robot's Simulation Code -->
+<script src="GS_myRobot_long.js"></script><!-- Our Robot's Simulation Code -->
+<script src="GS_autonInterface.js"></script><!-- Our Robot's Auton Code and abstractions for C++ -->
+<script src="GS_autons.js"></script><!-- C++ Compatible Code -->
+<script src="GS_autons_Partners.js"></script><!-- The partner Robots' Auton Code -->
+<script src="GS_autons_Opponent.js"></script><!-- The Opposing Robot's Auton Code -->
+<script src="GS_JScontrols.js"></script> --> <!-- The Gamepad Controls -->
+<script src="GS_partnerRobots.js"></script><!-- Our 2 Alliance Robot's Simulation Code -->
+<script src="GS_opponentRobots.js"></script><!-- The opposing Robot's Simulation Code -->
+
+<script src="GS_FRCfield.js"></script><!-- The Field itself -->
+
+<script	type="text/javascript">
+
+	function displayInfo(e){
+//		var gp = navigator.getGamepads()[0];
+//		alert("GamePad: "+e.gamepad.index+"\n ID: "+e.gamepad.id+"\nButtons: "+e.gamepad.buttons.length+"\nAxes: "+e.gamepad.axes.length,"ok")
+//		alert("GamePad Event ??","OK");
+//		if (e.gamepad.index > 0){
+//			e.gamepad.id
+//			e.gamepad.buttons.length
+//			e.gamepad.axes.length
+//		}
+	}
+/*   Execute on load */
+var gamepads = {};
+
+function gamepadHandler(event, connecting) {
+  var gamepad = event.gamepad;
+  // Note:
+  // gamepad === navigator.getGamepads()[gamepad.index]
+
+  if (connecting) {
+    gamepads[gamepad.index] = gamepad;
+  } else {
+    delete gamepads[gamepad.index];
+  }
+}
+
+	Gestalt();
+	initField();			// loads NV params if saved
+	initCubes();
+	drawField();
+	drawRobot();
+	//drawRobot_partner(0);
+	//drawRobot_partner(1);
+	drawRobot_opponent(0);
+	//drawRobot_opponent(1);
+	//drawRobot_opponent(2);
+	displayAuton();
+	displayAuton2();
+	if(supportsGamepads) {
+		window.addEventListener("gamepadconnected",displayInfo(event),false);
+		document.getElementById("gpsupport").innerHTML = "( Game Pads Supported )";
+	}else{
+		document.getElementById("gpsupport").innerHTML = "( NO Game Pad Support )";
+	}
+//window.addEventListener("gamepadconnected", function(e) { gamepadHandler(e, true); }, false);
+//window.addEventListener("gamepaddisconnected", function(e) { gamepadHandler(e, false); }, false);
+</script>
+</body>
+</html>

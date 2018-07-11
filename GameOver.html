@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>GAME OVER!</title>
+    <style>
+    html
+		{
+      width:inherit;
+      height:inherit;
+			overflow: scroll;
+			overflow-x: hidden;
+			background-color: black;
+      /*background-image: url(backGround.jpg);*/
+      border: 25px solid transparent;
+      border-image-source: url(pixel.png);
+      /*border-image-slice: 100% 100% 100% 100%;*/
+      border-image-slice: 40%;
+      border-image-repeat: round;
+		}
+    body
+    {
+    }
+		::-webkit-scrollbar
+		{
+			width: 0px;
+		}
+      @keyframes flicker {
+        0%   {color:black;}
+        25%  {color:white;}
+        50%  {color:black;}
+        75%  {color:white;}
+        100% {color:black;}
+      }
+
+      @keyframes redFadeIn{
+        0%    {color:black;}
+        100%  {color:red;}
+      }
+      @keyframes blueFadeIn{
+        0%    {color:black;}
+        100%  {color:blue;}
+      }
+
+
+      @keyframes slideUp {
+          from {margin-top:400px}
+          to {margin-top:200px}
+      }
+
+      @keyframes slideDown {
+          from {margin-bottom:0px}
+          to {margin-bottom:200px}
+      }
+
+
+      #gameover
+      {
+        color:white;
+        margin-top: 400px;
+        margin-bottom: 50px;
+        font-size: 150px;
+        text-align: center;
+        animation-name: flicker;
+        animation-duration: 2s;
+        animation-iteration-count: 3;
+      }
+
+      #winner
+      {
+        display:none;
+        color:white;
+        margin-top: 400px;
+        margin-bottom: 50px;
+        font-size: 150px;
+        text-align: center;
+        animation-delay: 1s;
+        animation-name: slideUp;
+        animation-duration: 2s;
+        animation-iteration-count: 1;
+        animation-fill-mode: forwards;
+      }
+
+      #buh
+      {
+        margin-bottom: 0px;
+        animation-name: slideDown;
+        animation-delay: 7s;
+        animation-duration: 2s;
+        animation-iteration-count: 1;
+        animation-fill-mode: forwards;
+      }
+
+      #again
+      {
+        margin-left: 0;
+        margin-right: 0;
+        margin-top: 0;
+        margin-bottom: 0px;
+        font-size: 50px;
+        text-align: center;
+        animation-delay: 10s;
+        animation-name: flicker;
+        animation-duration: 2s;
+        animation-iteration-count: infinite;
+      }
+
+      #scores
+      {
+        font-size: 100px;
+        text-align: center;
+        color:black;
+        margin-top: 150px;
+        margin-bottom: 135px;
+      }
+
+      #winScore
+      {
+        animation-delay: 10s;
+        animation-name: blueFadeIn;
+        animation-duration: 2s;
+        animation-iteration-count: 1;
+        animation-fill-mode: forwards;
+      }
+      #loseScore
+      {
+        margin-right: 200px;
+        animation-delay: 10s;
+        animation-name: redFadeIn;
+        animation-duration: 2s;
+        animation-iteration-count: 1;
+        animation-fill-mode: forwards;
+      }
+
+    </style>
+    <script>
+    var winner = localStorage.getItem("winner");
+    var bscore = localStorage.getItem("bscore");
+    var rscore = localStorage.getItem("rscore");
+
+    setInterval(displayWinner,6000);
+    setInterval(pressStart,14000);
+
+    function displayWinner(){
+//      setInterval(pollControllers,100);
+      var go = document.getElementById("gameover");
+      var win = document.getElementById("winner");
+      var wscore = document.getElementById("winScore");
+      var lscore = document.getElementById("loseScore");
+
+
+      if(winner == "blue"){
+        go.style.display = "none";
+        win.innerHTML = "BLUE WON!";
+        win.style.color = "blue";
+        win.style.display = "inherit";
+        wscore.style.textDecoration = "underline";
+        wscore.innerHTML = bscore;
+        lscore.innerHTML = rscore;
+        // win.animation = "slideUp 2s ease 0 infinite normal none running";
+        // go.animation = "slideUp 2s ease 0 infinite normal none running";
+      }else if(winner == "red"){
+        go.style.display = "none";
+        win.innerHTML = "RED WON!";
+        win.style.color = "red";
+        win.style.display = "inherit"
+        lscore.style.textDecoration = "underline";
+        wscore.innerHTML = bscore;
+        lscore.innerHTML = rscore;
+        // win.animation = "slideUp 2s ease 0 infinite normal none running";
+        // go.animation = "slideUp 2s ease 0 infinite normal none running"
+      }else{
+        go.style.display = "none";
+        win.innerHTML = "ITS A TIE!";
+        lscore.style.textDecoration = "underline";
+        wscore.style.textDecoration = "underline";
+        wscore.innerHTML = bscore;
+        lscore.innerHTML = rscore;
+      }
+    }
+
+    function pollControllers(){
+      var gp1 = navigator.getGamepads()[0];
+      var gp2 = navigator.getGamepads()[0];
+
+      if(gp1.buttons[9].value || gp2.buttons[9].value){
+        goToInstructions();
+      }
+
+    }
+
+    function handleKeys(e){
+
+      var key = e.keyCode;
+
+      if(key == 32){
+        goToInstructions();
+      }
+
+    }
+
+    function pressStart() {
+      document.getElementById('again').innerHTML = "PRESS START!"
+    }
+
+    function goToInstructions(){
+      location.href = "GS_instructions/Instructions.html";
+    }
+
+    </script>
+  </head>
+  <body onkeypress="handleKeys(event)" >
+    <h1 id="gameover"> GAME OVER! </h1>
+    <h1 id="winner"></h1>
+    <div id="scores">
+      <span id="loseScore">REE</span><span id="winScore">REE</span>
+    </div>
+    <div id = "buh"><h1 id="again">PLAY AGAIN?</h1></div>
+  </body>
+</html>

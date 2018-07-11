@@ -1,0 +1,20 @@
+380113 - Added actual field image background. Most Teleop and Auton functions working in grafic space
+(no real physics ). 2 player, partial stats in scoring.
+First attempt at adding PID for turning works.
+
+380114 - adding conversion routines to mimic power to movement results.
+
+myRobot.js -----------------------------------------------------------------------------------------
+
+moveXYR(x,y,r,z); is purely grafic.
+
+	function Drive_Arcade(speed,rotate){			// is currently used in autons
+		moveXYR();
+	}
+	function Drive_Arcade2(speed,rotate){
+
+380114 - opponent robot has independent autons - opponent drones in teleop
+
+380116 - vault logic started ( joystick driver established but not included yet )
+380118 - vault display and scoring
+380119 - AI for opponent and partner drone ( use auton 1 to test )

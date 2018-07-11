@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html style="background-color:black; color:white;">
+
+<head>
+  <!-- <link rel="stylesheet" href="instructions.css"> -->
+  <style type="text/css">
+    html{  /*hides the scroll bar*/
+      overflow: scroll;
+      overflow-x: hidden;
+    }
+    ::-webkit-scrollbar{
+      width: 0px;
+    }
+    @keyframes flicker{
+      /* from {color}
+      to {color} */
+      /* 0% {color:black;}
+      25% {color:white;}
+      50% {visibility:black;}
+      75% {color:white;}
+      100% {color:black;} */
+
+      /* 0% {visibility:hidden;}
+      100% {visibility:visible;} */
+      0% {opacity:0;}
+      25% {opacity:1;}
+      50% {opacity:0;}
+      75% {opacity:1;}
+      100% {opacity:0;}
+    }
+    #startButtonImage{
+      animation-name: flicker;
+      animation-duration: 2s;
+      animation-iteration-count: infinite;
+    }
+
+    @keyframes wiggle{
+      0%{transform:translate(0px,0px);}
+      25%{transform:translate(0px,10px);}
+      50%{transform:translate(0px,0px);}
+      75%{transform:translate(0px,10px);}
+      100%{transform:translate(0px,0px);}
+    }
+    #powerCube{
+      animation-name: wiggle;
+      animation-duration: 2s;
+      animation-iteration-count: infinite;
+    }
+    #scoringChart{
+      animation-delay: 0.5s;
+      animation-name: wiggle;
+      animation-duration: 2s;
+      animation-iteration-count: infinite;
+    }
+    #instructionsField{
+      animation-delay: 1s;
+      animation-name: wiggle;
+      animation-duration: 2s;
+      animation-iteration-count: infinite;
+    }
+
+    #levitateBox{
+      animation-name: wiggle;
+      animation-duration: 2s;
+      animation-iteration-count: infinite;
+    }
+    #boostBox{
+      animation-delay: 0.5s;
+      animation-name: wiggle;
+      animation-duration: 2s;
+      animation-iteration-count: infinite;
+    }
+    #forceBox{
+      animation-delay: 1s;
+      animation-name: wiggle;
+      animation-duration: 2s;
+      animation-iteration-count: infinite;
+    }
+
+    #endgameBox{
+      animation-delay: 0.5s;
+      animation-name: wiggle;
+      animation-duration: 2s;
+      animation-iteration-count: infinite;
+    }
+
+    #xboxControlMap{
+      animation-delay: 0.5s;
+      animation-name: wiggle;
+      animation-duration: 2s;
+      animation-iteration-count: infinite;
+    }
+  </style>
+
+</head>
+
+<script src="GS_instructions.js"></script>
+
+<body onkeydown="handleKeys(event) " style="font-family:Arial"> <!--background = "instructionsImages/backGround.jpg"-->
+  <!-- <div>
+    <canvas id="instructionsWindow" width="1000" height="500">You Browser Sucks</canvas>
+  </div> -->
+  <!-- <a href="GameSimulator.html" target="_blank"></a> -->
+
+  <center>
+    <div id="header">
+      <img id="firstPowerUpLogo" src="instructionsImages/FIRSTPowerUpLogo.jpg">
+      <h2> FRC 2018 Game Simulator </h2> <!-- Get FIRST Power Up image-->
+      <h5> <br><br><i>P1: scroll down with LEFT STICK</i> <br></h5>
+    </div>
+
+    <div id="main">
+      <h3><br>RULES:</h3>
+
+      <h3><br><em><u>Scoring:</u></em></h3>
+      <table id="rulesTable"  style="width:100%"><!-- -->
+        <!-- <tr>
+          <th align="center" style="width:33%" colspan="3"><em><u>Scoring:</u></em></th>
+        </tr> -->
+        <tr>
+          <td align="center" style="width:33%"> <img id="powerCube" src="instructionsImages/powerCube.png" height="300px"width="300px"></td>
+          <td align="center" style="width:33%"> <img id="scoringChart" src="instructionsImages/scoringChart.png" height="400px"width="600px">
+            <!-- Players may earn POINTS by placing <b>POWER CUBES</b> in their <i>ALLIANCE'S</i>
+            <b>SWITCH</b>, <b>SCALE</b>, or <b>EXCHANGE ZONE</b>.<br>
+            <br> However, POINTS are only awarded when a player's <i>ALLIANCE</i> has OWNERSHIP
+            of their own <b>SWITCH</b> and/or <b>SCALE</b>.<br>
+            <br> Players may earn <b>1pt per second</b> for their <b>SWITCH</b> and/or <b>SCALE</b>.<br>
+            <br> Players may earn <b>5pts for each cube</b> placed in their <i>ALLIANCE'S</i> <b>EXCHANGE ZONE</b>
+             (max 9 <b>POWER CUBES</b>).<br> -->
+          </td>
+          <td align="center" style="width:33%"><img id="instructionsField" src="instructionsImages/instructionsField.png" height="300px"width="400px"></td>
+        </tr>
+        <!-- <tr>
+          <th align="center" style="width:33%" colspan="3"><br><em><u>Power Ups:</u></em></th>
+        </tr>
+        <tr>
+          <td align="center" style="width:33%"><img id="leviateBox" src="levitateBox.jpg" height="300px"width="400px">
+            <b>Levitate:</b> <br> Give your <i>
+            ALLIANCE </i> a free climb.<br><br><br><br><br>
+          </td>
+          <td align="center" style="width:33%"><img id="boostBox" src="boostBox.jpg" height="300px"width="400px">
+            <b>Boost:</b> <br>Double points from
+            your...
+            <br> <b>SWITCH</b> (1 <b>POWER CUBE</b> required)
+            <br> <b>SCALE</b> (2 <b>POWER CUBES</b> required)
+            <br> <b> SWITCH and SCALE</b> (3 <b>POWER CUBES</b> required)
+            <br>Lasts 10 secs.
+          </td>
+          <td align="center" style="width:33%"><img id="forceBox" src="forceBox.jpg" height="300px"width="400px">
+            <b>Force:</b><br>Take OWNERSHIP of
+            your <i>ALLIANCE'S</i> field element(s)...
+            <br> <b>SWITCH</b> (1 <b>POWER CUBE</b> required)
+            <br> <b>SCALE</b> (2 <b>POWER CUBES</b> required)
+            <br> <b> SWITCH and SCALE</b> (3 <b>POWER CUBES</b> required)
+            <br>Lasts 10 secs.
+          </td>
+        </tr>
+        <tr>
+          <th align="center" style="width:33%" colspan="3"><br><em><u>End Game:</u></em></th>
+        </tr>
+        <tr>
+          <td align="center" style="width:33%">During the last 30 secs. players can either...</td>
+          <td align="center" style="width:33%">PARK on their <b>PLATFORM</b> earning <b>5pts.</b></td>
+          <td align="center" style="width:33%">CLIMB on their side of the <b>SCALE</b> earning <b>30pts.</b></td>
+          <td align="center" style="width:33%" colspan="3"> <img id="endgameBox" src="endgameBox.jpg"></td>
+        </tr> -->
+
+      </table>
+      <h3><br><em><u>Power Ups:</u></em></h3>
+      <table id="powerUpTable" style="width:100%">
+        <tr>
+          <td align="center" style="width:33%"><img id="levitateBox" src="instructionsImages/levitateBox.png" height="300px"width="400px"></td>
+          <td align="center" style="width:33%"><img id="boostBox" src="instructionsImages/boostBox.png" height="300px"width="400px"></td>
+          <td align="center" style="width:33%"><img id="forceBox" src="instructionsImages/forceBox.png" height="300px"width="400px"></td>
+        </tr>
+      </table>
+
+      <h3><br><em><u>End Game:</u></em></h3>
+      <table id="powerUpTable" style="width:100%">
+        <tr>
+          <td align="center" style="width:33%" colspan="3"> <img id="endgameBox" src="instructionsImages/endgameBox.png" height="400px"width="600px"></td>
+        </tr>
+      </table>
+
+      <h3>CONTROLS:</h3>
+      <table id="controlsTable"  style="width:100%">
+        <tr>
+          <td align="center" style="width:33%" colspan="3"> <img id="xboxControlMap" src="instructionsImages/xboxControlMap.png"></td>
+        </tr>
+      </table>
+    </div>
+
+    <div id="footer">
+      <img id="startButtonImage" src="instructionsImages/startButton.png" height="500px"width="800px"></td>
+    </div>
+  </center>
+
+</body>
+</html>
